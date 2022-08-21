@@ -1,7 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NSE.Identidade.API.Models;
+using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.JsonWebTokens;
+using NSE.Identidade.API.Extensions;
+using Microsoft.Extensions.Options;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using System.Linq;
 
 namespace NSE.Identidade.API.Controllers
 {
@@ -15,11 +23,15 @@ namespace NSE.Identidade.API.Controllers
         //Gerencia questões de login
         private readonly SignInManager<IdentityUser> _signInManager;
 
+        private readonly AppSettings _appSettings;
+
         public AuthController(UserManager<IdentityUser> userManager, 
-            SignInManager<IdentityUser> signInManager)
+            SignInManager<IdentityUser> signInManager,
+            IOptions<AppSettings> appSettings)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _appSettings = appSettings.Value;
         }
 
         [HttpPost("nova-conta")]
@@ -37,7 +49,7 @@ namespace NSE.Identidade.API.Controllers
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, isPersistent: false);
-                return Ok();
+                return Ok(await GerarJwt(user.Email));
             }
 
             return BadRequest();
@@ -53,10 +65,67 @@ namespace NSE.Identidade.API.Controllers
 
             if (result.Succeeded)
             {
-                return Ok();
+                return Ok(await GerarJwt(usuarioLogin.Email));
             }
 
             return BadRequest();
         }
+
+        private async Task<UsuarioRepostaLogin> GerarJwt(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            var claims = await _userManager.GetClaimsAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
+
+            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+            //quando vai expirar
+            claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTime.UtcNow).ToString()));
+            //quando foi emitido
+            claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer64));
+
+
+            foreach (var userRole in roles)
+            {
+                claims.Add(new Claim("role", userRole));
+            }
+            var identityClaims = new ClaimsIdentity();
+            identityClaims.AddClaims(claims);
+
+            // Gerar o manipulador do token
+
+            var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+
+            var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
+            {
+                 Audience = _appSettings.ValidoEm,
+                 Issuer = _appSettings.Emissor,
+                 Subject = identityClaims,
+                  Expires = DateTime.UtcNow.AddHours(_appSettings.ExpiracaoHoras),
+                   SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            });
+
+            var encodedToken = tokenHandler.WriteToken(token);
+
+            var response = new UsuarioRepostaLogin
+            {
+                AccessToken = encodedToken,
+                ExpiresIn = TimeSpan.FromHours(_appSettings.ExpiracaoHoras).TotalSeconds,
+                UsuarioToken = new UsuarioToken
+                {
+                    Email = user.Email,
+                    Id = user.Id,
+                    Claims = claims.Select(c => new UsuarioClaim { Type = c.Type, Value = c.Value })
+                }
+            };
+
+            return response;
+
+        }
+
+        private static long ToUnixEpochDate(DateTime date)
+            => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
     }
 }
