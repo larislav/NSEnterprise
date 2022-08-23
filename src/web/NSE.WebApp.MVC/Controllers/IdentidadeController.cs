@@ -50,7 +50,6 @@ namespace NSE.WebApp.MVC.Controllers
             var resposta = await _autenticacaoService.Login(usuarioLogin);
 
 
-
             if (false) return View(usuarioLogin);
 
             // Realizar login na APP

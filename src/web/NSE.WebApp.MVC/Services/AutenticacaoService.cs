@@ -13,7 +13,7 @@ namespace NSE.WebApp.MVC.Services
         {
             _httpClient = httpClient;
         }
-        public async Task<string> Login(UsuarioLogin usuarioLogin)
+        public async Task<UsuarioRepostaLogin> Login(UsuarioLogin usuarioLogin)
         {
             var loginContent = new StringContent
                 (
@@ -24,12 +24,15 @@ namespace NSE.WebApp.MVC.Services
 
             var response = await _httpClient.PostAsync("https://localhost:44325/api/identidade/autenticar", loginContent);
 
-            var teste = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
 
-            return JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+            return JsonSerializer.Deserialize<UsuarioRepostaLogin>(await response.Content.ReadAsStringAsync(), options);
         }
 
-        public async Task<string> Registro(UsuarioRegistro usuarioRegistro)
+        public async Task<UsuarioRepostaLogin> Registro(UsuarioRegistro usuarioRegistro)
         {
             var registroContent = new StringContent
                 (
@@ -40,7 +43,12 @@ namespace NSE.WebApp.MVC.Services
 
             var response = await _httpClient.PostAsync("https://localhost:44325/api/identidade/nova-conta", registroContent);
 
-            return JsonSerializer.Deserialize<string>(await response.Content.ReadAsStringAsync());
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            return JsonSerializer.Deserialize<UsuarioRepostaLogin>(await response.Content.ReadAsStringAsync(), options);
         }
     }
 }

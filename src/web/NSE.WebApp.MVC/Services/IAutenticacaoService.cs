@@ -5,7 +5,7 @@ namespace NSE.WebApp.MVC.Services
 {
     public interface IAutenticacaoService
     {
-        Task<string> Login(UsuarioLogin usuarioLogin);
-        Task<string> Registro(UsuarioRegistro usuarioRegistro);
+        Task<UsuarioRepostaLogin> Login(UsuarioLogin usuarioLogin);
+        Task<UsuarioRepostaLogin> Registro(UsuarioRegistro usuarioRegistro);
     }
 }
