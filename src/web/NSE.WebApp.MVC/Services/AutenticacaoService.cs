@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NSE.WebApp.MVC.Services
 {
-    public class AutenticacaoService : IAutenticacaoService
+    public class AutenticacaoService : Service, IAutenticacaoService
     {
         private readonly HttpClient _httpClient;
         public AutenticacaoService(HttpClient httpClient)
@@ -23,11 +23,18 @@ namespace NSE.WebApp.MVC.Services
                 );
 
             var response = await _httpClient.PostAsync("https://localhost:44325/api/identidade/autenticar", loginContent);
-
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             };
+
+            if (!TratarErrosResponse(response))
+            {
+                return new UsuarioRepostaLogin
+                {
+                    ResponseResult = JsonSerializer.Deserialize<ResponseResult>(await response.Content.ReadAsStringAsync(), options)
+                };
+            }
 
             return JsonSerializer.Deserialize<UsuarioRepostaLogin>(await response.Content.ReadAsStringAsync(), options);
         }
@@ -47,6 +54,14 @@ namespace NSE.WebApp.MVC.Services
             {
                 PropertyNameCaseInsensitive = true
             };
+
+            if (!TratarErrosResponse(response))
+            {
+                return new UsuarioRepostaLogin
+                {
+                    ResponseResult = JsonSerializer.Deserialize<ResponseResult>(await response.Content.ReadAsStringAsync(), options)
+                };
+            }
 
             return JsonSerializer.Deserialize<UsuarioRepostaLogin>(await response.Content.ReadAsStringAsync(), options);
         }
