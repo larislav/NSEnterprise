@@ -15,23 +15,26 @@ namespace NSE.WebApp.MVC.Configuration
 
         public static void UseMvcConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                //Pega os erros que não foram tratados
-                //Adiciona um middleware no pipeline que pega as exceções, realiza o log, reseta o request path,
-                // e re-executa o request apontando para a rota \/
-                app.UseExceptionHandler("/erro/500");
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
+            //else
+            //{
+               
+            //}
 
-                //Pega os erros que foram tratados
-                app.UseStatusCodePagesWithRedirects("/erro/{0}");
+            //Pega os erros que não foram tratados
+            //Adiciona um middleware no pipeline que pega as exceções, realiza o log, reseta o request path,
+            // e re-executa o request apontando para a rota \/
+            app.UseExceptionHandler("/erro/500");
 
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+            //Pega os erros que foram tratados
+            app.UseStatusCodePagesWithRedirects("/erro/{0}");
+
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
