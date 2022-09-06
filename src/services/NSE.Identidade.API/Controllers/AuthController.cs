@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using NSE.WebAPI.Core.Identidade;
 
 namespace NSE.Identidade.API.Controllers
 {
