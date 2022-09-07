@@ -18,15 +18,6 @@ namespace NSE.WebApp.MVC.Configuration
 
         public static void UseMvcConfiguration(this IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-            //else
-            //{
-               
-            //}
-
             //Pega os erros que não foram tratados
             //Adiciona um middleware no pipeline que pega as exceções, realiza o log, reseta o request path,
             // e re-executa o request apontando para a rota \/
@@ -51,7 +42,7 @@ namespace NSE.WebApp.MVC.Configuration
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Catalogo}/{action=Index}/{id?}");
             });
         }
     }
