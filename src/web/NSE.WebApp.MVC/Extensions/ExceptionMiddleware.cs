@@ -25,14 +25,14 @@ namespace NSE.WebApp.MVC.Extensions
             {
                 HandleRequestExceptionAsync(httpContext, ex.StatusCode);
             }
-            catch(ValidationApiException ex)
-            {
-                HandleRequestExceptionAsync(httpContext, ex.StatusCode);
-            }
-            catch (ApiException ex)
-            {
-                HandleRequestExceptionAsync(httpContext, ex.StatusCode);
-            }
+            //catch(ValidationApiException ex)
+            //{
+            //    HandleRequestExceptionAsync(httpContext, ex.StatusCode);
+            //}
+            //catch (ApiException ex)
+            //{
+            //    HandleRequestExceptionAsync(httpContext, ex.StatusCode);
+            //}
         }
 
         private static void HandleRequestExceptionAsync(HttpContext httpContext, HttpStatusCode statusCode)
