@@ -20,7 +20,7 @@ namespace NSE.Core.DomainObjects
             Numero = numero;
         }
 
-        private static bool Validar(string cpf)
+        public static bool Validar(string cpf)
         {
             cpf = cpf.ApenasNumeros(cpf);
 
