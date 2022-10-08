@@ -27,4 +27,5 @@ namespace NSE.Core.Messages
 
             return ValidationResult;
         }
+    }
 }
