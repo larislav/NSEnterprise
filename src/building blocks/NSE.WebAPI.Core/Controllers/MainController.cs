@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices.WindowsRuntime;
 
-namespace NSE.Identidade.API.Controllers
+namespace NSE.WebAPI.Core.Controllers
 {
     [ApiController]
     public abstract class MainController : Controller
@@ -27,6 +32,16 @@ namespace NSE.Identidade.API.Controllers
         {
             var erros = modelState.Values.SelectMany(e => e.Errors);
             foreach (var erro in erros)
+            {
+                AdicionarErroProcessamento(erro.ErrorMessage);
+            }
+
+            return CustomResponse();
+        }
+
+        protected ActionResult CustomResponse(ValidationResult validationResult)
+        {
+            foreach (var erro in validationResult.Errors)
             {
                 AdicionarErroProcessamento(erro.ErrorMessage);
             }

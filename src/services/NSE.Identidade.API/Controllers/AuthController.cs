@@ -13,6 +13,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using NSE.WebAPI.Core.Identidade;
+using NSE.WebAPI.Core.Controllers;
 
 namespace NSE.Identidade.API.Controllers
 {

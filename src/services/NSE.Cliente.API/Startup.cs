@@ -18,6 +18,7 @@ namespace NSE.Cliente.API
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
         public Startup(IHostEnvironment hostEnvironment)
         {
             var builder = new ConfigurationBuilder()
@@ -33,8 +34,6 @@ namespace NSE.Cliente.API
 
             Configuration = builder.Build();
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
