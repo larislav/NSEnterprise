@@ -6,6 +6,7 @@ using NSE.Cliente.API.Application.Events;
 using NSE.Cliente.API.Data;
 using NSE.Cliente.API.Data.Repository;
 using NSE.Cliente.API.Models;
+using NSE.Cliente.API.Services;
 using NSE.Core.Mediator;
 
 namespace NSE.Cliente.API.Configuration
@@ -21,6 +22,10 @@ namespace NSE.Cliente.API.Configuration
             services.AddScoped<INotificationHandler<ClienteRegistradoEvent>, ClienteEventHandler>();
 
             services.AddScoped<ClienteContext>();
+
+            // Como é um serviço hospedado, tem que trabalhar como Singleton, não pode ser por request
+            // Trabalha como um pipeline do .NET
+            services.AddHostedService<RegistroClienteIntegrationHandler>();
         }
     }
 }
