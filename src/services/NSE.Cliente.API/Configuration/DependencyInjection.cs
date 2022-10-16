@@ -25,7 +25,7 @@ namespace NSE.Cliente.API.Configuration
 
             // Como é um serviço hospedado, tem que trabalhar como Singleton, não pode ser por request
             // Trabalha como um pipeline do .NET
-            services.AddHostedService<RegistroClienteIntegrationHandler>();
+            //services.AddHostedService<RegistroClienteIntegrationHandler>();
         }
     }
 }
