@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FluentValidation;
+using System;
 
 namespace NSE.Carrinho.API.Model
 {
@@ -19,6 +20,51 @@ namespace NSE.Carrinho.API.Model
             Id = Guid.NewGuid();
         }
 
+        internal void AssociarCarrinho(Guid carrinhoId)
+        {
+            CarrinhoId = carrinhoId;
+        }
 
+        internal decimal CalcularValor()
+        {
+            return Quantidade * Valor;
+        }
+
+        internal void AdicionarUnidade(int unidades)
+        {
+            Quantidade += unidades;
+        }
+
+        internal bool EhValido()
+        {
+            return new ItemPedidoValidation().Validate(this).IsValid;
+        }
+
+    }
+
+    public class ItemPedidoValidation : AbstractValidator<CarrinhoItem>
+    {
+        public ItemPedidoValidation()
+        {
+            RuleFor(c => c.ProdutoId)
+                .NotEqual(Guid.Empty)
+                .WithMessage("Id do produto inválido");
+
+            RuleFor(c => c.Nome)
+                .NotEmpty()
+                .WithMessage("O nome do produto não foi informado");
+
+            RuleFor(c => c.Quantidade)
+                .GreaterThan(0)
+                .WithMessage("A quantidade mínima de um item é 1");
+
+            RuleFor(c => c.Quantidade)
+                .LessThan(5)
+                .WithMessage("A quantidade máxima de um item é 5");
+
+            RuleFor(c => c.Valor)
+                .GreaterThan(0)
+                .WithMessage("O valor do item precisa ser maior que 0");
+        }
     }
 }

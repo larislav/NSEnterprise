@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NSE.Carrinho.API.Model
 {
@@ -15,9 +16,41 @@ namespace NSE.Carrinho.API.Model
             Id = Guid.NewGuid();
             ClienteId = clienteId;
         }
-        public CarrinhoCliente()
-        {
+        public CarrinhoCliente() { }
 
+        internal void AdicionarItem(CarrinhoItem item)
+        {
+            if (!item.EhValido()) return;
+
+            item.AssociarCarrinho(Id);
+
+            if (CarrinhoItemExistente(item))
+            {
+                var itemExistente = ObterProdutoPorId(item.ProdutoId);
+                itemExistente.AdicionarUnidade(item.Quantidade);
+
+                item = itemExistente;
+                Itens.Remove(itemExistente);
+            }
+
+            Itens.Add(item);
+
+            CalcularValorCarrinho();
+        }
+
+        internal CarrinhoItem ObterProdutoPorId(Guid produtoId)
+        {
+            return Itens.FirstOrDefault(p => p.ProdutoId == produtoId);
+        }
+
+        internal bool CarrinhoItemExistente(CarrinhoItem item)
+        {
+            return Itens.Any(p => p.ProdutoId == item.ProdutoId);
+        }
+
+        internal void CalcularValorCarrinho()
+        {
+            ValorTotal = Itens.Sum(p => p.CalcularValor());
         }
     }
 }
