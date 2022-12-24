@@ -38,6 +38,25 @@ namespace NSE.Carrinho.API.Model
             CalcularValorCarrinho();
         }
 
+        internal void AtualizarItem(CarrinhoItem item)
+        {
+            if (!item.EhValido()) return;
+            item.AssociarCarrinho(Id);
+
+            var itemExistente = ObterProdutoPorId(item.ProdutoId);
+
+            Itens.Remove(itemExistente);
+            Itens.Add(item);
+
+            CalcularValorCarrinho();
+        }
+
+        internal void AtualizarUnidades(CarrinhoItem item, int unidades)
+        {
+            item.AdicionarUnidade(unidades);
+            AtualizarItem(item);
+        }
+
         internal CarrinhoItem ObterProdutoPorId(Guid produtoId)
         {
             return Itens.FirstOrDefault(p => p.ProdutoId == produtoId);
@@ -51,6 +70,12 @@ namespace NSE.Carrinho.API.Model
         internal void CalcularValorCarrinho()
         {
             ValorTotal = Itens.Sum(p => p.CalcularValor());
+        }
+
+        internal void RemoverItem(CarrinhoItem item)
+        {
+            Itens.Remove(ObterProdutoPorId(item.ProdutoId));
+            CalcularValorCarrinho();
         }
     }
 }
