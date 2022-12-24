@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation.Results;
+using Microsoft.EntityFrameworkCore;
 using NSE.Carrinho.API.Model;
 using System.Linq;
 
@@ -21,6 +22,8 @@ namespace NSE.Carrinho.API.Data
             {
                 property.SetColumnType("varchar(100)");
             }
+
+            modelBuilder.Ignore<ValidationResult>();
 
             modelBuilder.Entity<CarrinhoCliente>()
                 .HasIndex(c => c.ClienteId)

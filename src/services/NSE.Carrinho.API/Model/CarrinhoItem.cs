@@ -42,34 +42,34 @@ namespace NSE.Carrinho.API.Model
 
         internal bool EhValido()
         {
-            return new ItemPedidoValidation().Validate(this).IsValid;
+            return new ItemCarrinhoValidation().Validate(this).IsValid;
         }
 
-    }
-
-    public class ItemPedidoValidation : AbstractValidator<CarrinhoItem>
-    {
-        public ItemPedidoValidation()
+        public class ItemCarrinhoValidation : AbstractValidator<CarrinhoItem>
         {
-            RuleFor(c => c.ProdutoId)
-                .NotEqual(Guid.Empty)
-                .WithMessage("Id do produto inválido");
+            public ItemCarrinhoValidation()
+            {
+                RuleFor(c => c.ProdutoId)
+                    .NotEqual(Guid.Empty)
+                    .WithMessage("Id do produto inválido");
 
-            RuleFor(c => c.Nome)
-                .NotEmpty()
-                .WithMessage("O nome do produto não foi informado");
+                RuleFor(c => c.Nome)
+                    .NotEmpty()
+                    .WithMessage("O nome do produto não foi informado");
 
-            RuleFor(c => c.Quantidade)
-                .GreaterThan(0)
-                .WithMessage("A quantidade mínima de um item é 1");
+                RuleFor(c => c.Quantidade)
+                    .GreaterThan(0)
+                    .WithMessage(item => $"A quantidade mínima para o {item.Nome} é 1");
 
-            RuleFor(c => c.Quantidade)
-                .LessThan(5)
-                .WithMessage("A quantidade máxima de um item é 5");
+                RuleFor(c => c.Quantidade)
+                    .LessThan(5)
+                    .WithMessage(item => $"A quantidade máxima do {item.Nome}é 5");
 
-            RuleFor(c => c.Valor)
-                .GreaterThan(0)
-                .WithMessage("O valor do item precisa ser maior que 0");
+                RuleFor(c => c.Valor)
+                    .GreaterThan(0)
+                    .WithMessage(item => $"O valor do {item.Nome} precisa ser maior que 0");
+            }
         }
     }
+  
 }
