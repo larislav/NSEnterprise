@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using System;
+using System.Text.Json.Serialization;
 
 namespace NSE.Carrinho.API.Model
 {
@@ -13,6 +14,7 @@ namespace NSE.Carrinho.API.Model
         public string Imagem { get; set; }
         public Guid CarrinhoId { get; set; }
 
+        [JsonIgnore]
         public CarrinhoCliente CarrinhoCliente { get; set; }
 
         public CarrinhoItem()
@@ -62,8 +64,8 @@ namespace NSE.Carrinho.API.Model
                     .WithMessage(item => $"A quantidade mínima para o {item.Nome} é 1");
 
                 RuleFor(c => c.Quantidade)
-                    .LessThan(5)
-                    .WithMessage(item => $"A quantidade máxima do {item.Nome}é 5");
+                    .LessThanOrEqualTo(5)
+                    .WithMessage(item => $"A quantidade máxima do {item.Nome }é 5");
 
                 RuleFor(c => c.Valor)
                     .GreaterThan(0)
